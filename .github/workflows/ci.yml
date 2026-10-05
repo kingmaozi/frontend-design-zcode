@@ -1,0 +1,63 @@
+name: ZCode packaging check
+
+# Guards the packaging contract: the manifest must describe what is shipped, and
+# the sync script must stay compatible with the bash 3.2 that macOS ships (that
+# is what /bin/bash resolves to on ZCode Desktop, where a human would run this).
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Manifest and sync script
+    runs-on: macos-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show system Bash version
+        run: /bin/bash --version | head -n 1
+
+      - name: Parse tracked shell scripts with system Bash
+        run: |
+          set -e
+          git ls-files '*.sh' | while IFS= read -r f; do
+            /bin/bash -n "$f"
+            echo "syntax OK: $f"
+          done
+
+      - name: Manifest matches what is shipped
+        run: |
+          set -e
+          python3 - <<'PY'
+          import json, os, re
+          data = json.load(open(".zcode-plugin/plugin.json"))
+          assert data["name"] == "frontend-design", data["name"]
+          skills = data["skills"].lstrip("./")
+          assert os.path.isdir(skills), "%s is not a directory" % skills
+          names = sorted(n for n in os.listdir(skills) if os.path.isdir(os.path.join(skills, n)))
+          assert names == ["frontend-design"], names
+          body = open(os.path.join(skills, "frontend-design", "SKILL.md"), encoding="utf-8").read()
+          match = re.match(r"^---\n(.*?)\n---\n", body, re.S)
+          assert match, "SKILL.md has no YAML frontmatter"
+          assert re.search(r"^name:\s*\S", match.group(1), re.M), "frontmatter has no name"
+          assert re.search(r"^description:\s*\S", match.group(1), re.M), "frontmatter has no description"
+          print("manifest OK: name=%s version=%s skills=%s" % (data["name"], data["version"], names))
+          PY
+
+      - name: No hooks are shipped, so no file mode is consulted
+        run: |
+          set -e
+          test ! -e hooks
+          python3 - <<'PY'
+          import json
+          data = json.load(open(".zcode-plugin/plugin.json"))
+          assert "hooks" not in data, "this packaging is skills-only by design"
+          print("skills-only packaging confirmed")
+          PY

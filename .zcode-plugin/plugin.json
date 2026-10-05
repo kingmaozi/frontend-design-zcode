@@ -1,0 +1,23 @@
+{
+  "name": "frontend-design",
+  "version": "1.0.0",
+  "description": "Create distinctive, production-grade frontend interfaces with high design quality. Generates creative, polished code that avoids generic AI aesthetics.",
+  "description_i18n": {
+    "en": "Create distinctive, production-grade frontend interfaces with high design quality. Generates creative, polished code that avoids generic AI aesthetics.",
+    "zh-CN": "前端设计技能：产出有辨识度、生产级质量的界面，避开千篇一律的 AI 审美（上游 Anthropic claude-plugins-public，MIT/见包内 LICENSE）。"
+  },
+  "author": {
+    "name": "Anthropic (upstream), packaged by kingmaozi",
+    "email": "support@anthropic.com"
+  },
+  "homepage": "https://github.com/anthropics/claude-plugins-public/tree/main/plugins/frontend-design",
+  "repository": "https://github.com/anthropics/claude-plugins-public",
+  "keywords": [
+    "frontend",
+    "ui",
+    "design",
+    "css",
+    "zcode"
+  ],
+  "skills": "./skills/"
+}
