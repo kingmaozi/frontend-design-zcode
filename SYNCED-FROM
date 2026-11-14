@@ -1,5 +1,5 @@
 upstream: https://github.com/anthropics/claude-plugins-public.git
 subdir: plugins/frontend-design
-commit: f75f5b25ae94f4332be4ff5f18435741d2589bdb
+commit: b5b01ac4f889fec0c4c6bb89f27ca7c8574473f6
 upstream_version: 1.1.1
-synced_at: 2026-11-13T11:17:43Z
+synced_at: 2026-11-14T10:42:38Z
